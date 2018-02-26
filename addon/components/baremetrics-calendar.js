@@ -1,16 +1,15 @@
 /* global Calendar */
 
-import Ember from 'ember';
-
-const computed = Ember.computed;
-const { equal } = Ember.computed;
-const run = Ember.run;
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { equal } from '@ember/object/computed';
+import { run } from '@ember/runloop';
 
 /**
  * @module
  * @augments ember/Component
  */
-export default Ember.Component.extend({
+export default Component.extend({
 
   // -------------------------------------------------------------------------
   // Dependencies
@@ -166,7 +165,7 @@ export default Ember.Component.extend({
    * @type {String}
    */
   type: computed('startDate', function() {
-    if (Ember.typeOf(this.get('startDate')) !== 'undefined') {
+    if (typeof this.get('startDate') !== 'undefined') {
       return 'double';
     }
     return 'single';
@@ -198,7 +197,7 @@ export default Ember.Component.extend({
    */
   _buildCalendar() {
     let component = this;
-    let element = Ember.$('<div class="baremetrics-calendar">');
+    let element = this.$('<div class="baremetrics-calendar">');
     this.$().empty().append(element);
     let config = {
       element: element,
