@@ -1,5 +1,6 @@
 /* global moment */
-import Ember from 'ember';
+import { typeOf } from '@ember/utils';
+import { later } from '@ember/runloop';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
@@ -14,7 +15,7 @@ test('it renders a single date', function(assert) {
   let currentDate = moment();
   this.set('currentDate', currentDate.toDate());
   this.on('changed', (newDate) => {
-    assert.equal(Ember.typeOf(newDate), 'date', 'changed action returns a Date');
+    assert.equal(typeOf(newDate), 'date', 'changed action returns a Date');
     assert.notEqual(currentDate.toISOString(), newDate.toISOString(), 'changed action returns updated Date');
   });
 
@@ -23,7 +24,7 @@ test('it renders a single date', function(assert) {
   this.$('.dr-date').click();
   this.$('.dr-current').next('.dr-day').mousedown();
 
-  Ember.run.later(() => {
+  later(() => {
     assert.equal(this.$('.dr-input').text().trim(), format(currentDate.add(1, 'day')), 'renders updated date');
     done();
   }, 10);
@@ -38,8 +39,8 @@ test('it renders a date range', function(assert) {
   this.set('startDate', startDate.toDate());
   this.set('endDate', endDate.toDate());
   this.on('changed', (result) => {
-    assert.equal(Ember.typeOf(result.startDate), 'date', 'changed action returns a start date');
-    assert.equal(Ember.typeOf(result.endDate), 'date', 'changed action returns a end date');
+    assert.equal(typeOf(result.startDate), 'date', 'changed action returns a start date');
+    assert.equal(typeOf(result.endDate), 'date', 'changed action returns a end date');
     assert.notEqual(endDate.toISOString(), result.endDate.toISOString(), 'changed action returns updated startDate');
   });
 
@@ -50,7 +51,7 @@ test('it renders a date range', function(assert) {
   this.$('.dr-date').click();
   this.$('.dr-end.dr-current').next('.dr-day').mousedown();
 
-  Ember.run.later(() => {
+  later(() => {
     let expectedResult = `${ format(startDate) }–${ format(endDate.add(1, 'day')) }`;
     assert.equal(this.$('.dr-input').text().trim(), expectedResult, 'renders updated date');
     done();
