@@ -213,13 +213,13 @@ export default Component.extend({
         component._parseCallback(this);
       }
     };
+    config.earliest_date = this.get('earliestDate');
+    config.latest_date = this.get('latestDate');
     if (this.get('type') === 'single') {
       config.current_date = this.get('currentDate');
       config.required = this.get('required');
       element.addClass('daterange--single');
     } else {
-      config.earliest_date = this.get('earliestDate');
-      config.latest_date = this.get('latestDate');
       config.start_date = this.get('startDate');
       config.end_date = this.get('endDate');
       config.format.preset = this.get('presetFormat');
