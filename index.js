@@ -1,11 +1,6 @@
 /* eslint-env node */
 'use strict';
 
-const path = require('path');
-const Funnel = require('broccoli-funnel');
-const MergeTrees = require('broccoli-merge-trees');
-const map = require('broccoli-stew').map;
-
 module.exports = {
   name: 'ember-baremetrics-calendar',
 
@@ -15,44 +10,25 @@ module.exports = {
     }
   },
 
-  included: function () {
+  included: function(app) {
     this._super.included.apply(this, arguments);
 
-    let findHost = this._findHost;
-    let app = findHost.call(this);
-    this.app = app;
+    // see: https://github.com/ember-cli/ember-cli/issues/3718
+    while (typeof app.import !== 'function' && app.app) {
+      app = app.app;
+    }
 
-    let options = app.options.baremetricsCalendar || {};
+    var options = app.options.baremetricsCalendar || {};
 
-    app.import('vendor/moment.js');
-    app.import('vendor/Calendar.js');
-
+    var isFastBoot = process.env.EMBER_CLI_FASTBOOT === 'true';
+    if (!isFastBoot) {
+      app.import('bower_components/BaremetricsCalendar/public/js/Calendar.js');
+    }
     if (options.includeStyles !== false) {
-      app.import('vendor/ember-baremetrics-calendar/application.css');
-    }
-  },
-
-  treeForVendor: function (vendorTree) {
-    let BareMetricsTree = new Funnel(path.join(this.project.root, 'node_modules', 'BaremetricsCalendar', 'public', 'js'));
-    //Only add if not FastBoot
-    BareMetricsTree = map(BareMetricsTree, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
-
-    let MomentTree = new Funnel(path.join(this.project.root, 'node_modules', 'moment'), {
-      files: ['moment.js'],
-    });
-    // Only add if not FastBoot
-    MomentTree = map(MomentTree, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
-
-    let styleTree = new Funnel(path.join(this.project.root, 'node_modules', 'BaremetricsCalendar', 'public', 'css'), {
-      destDir: 'ember-baremetrics-calendar'
-    });
-
-    let trees = [BareMetricsTree, MomentTree, styleTree];
-    // Check if vendor tree is null
-    if (vendorTree) {
-      trees.push(vendorTree);
+      app.import('bower_components/BaremetricsCalendar/public/css/application.css');
     }
 
-    return new MergeTrees(trees);
-  },
+    return app;
+  }
+
 };
